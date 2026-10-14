@@ -1,0 +1,65 @@
+# DeepHat V2 — SFT TEMPLATE (LLaMA-Factory), Qwen3.5-9B-Base, bf16 LoRA.
+#
+# This is a TEMPLATE. Copy it, fill in your dataset names + output_dir, and run:
+#   llamafactory-cli train configs/sft_qwen3.5-9b_lora.yaml
+#
+# WHY bf16 LoRA (NOT QLoRA): Qwen3.5-9B-Base is a DeltaNet/SSM hybrid; its
+# linear-attention / state matrices quantize poorly (nf4 wrecks recall + long
+# ctx). The 14B dense QLoRA arm (configs/exp1_armB_*) is insurance only.
+#
+# PREP (on the Vast image before launch):
+#   pip install "transformers==5.5.0" "numpy<2.3" "accelerate>=1.6" "peft>=0.14" \
+#               "flash-attn>=2.7" "datasets>=3.2"
+#   # Strip the MTP (multi-token-prediction) head first; LLaMA-Factory does not
+#   # train it and it bloats VRAM / breaks save:
+#   python scripts/strip_mtp_head.py Qwen/Qwen3.5-9B-Base /workspace/qwen3.5-9b-base-nomtp
+
+### model
+model_name_or_path: /workspace/qwen3.5-9b-base-nomtp   # MTP head stripped
+trust_remote_code: true
+
+### method  (bf16 LoRA — NO quantization_bit)
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_rank: 16
+lora_alpha: 16
+lora_dropout: 0.0
+# q/k/v/o/gate/up/down. NOTE: enumerate the DeltaNet mixer projection names
+# against the REAL model config and add them here before a full run.
+lora_target: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+
+### accel
+flash_attn: fa2            # falls back to sdpa automatically (see scripts/exp1_remote.sh)
+gradient_checkpointing: true
+bf16: true
+
+### dataset — point at your refusal-FILTERED blend (see data/build_sft_mix.py)
+# Data must already have refusal/alignment examples removed (hard constraint).
+dataset: YOUR_FILTERED_BLEND            # registered in LLaMA-Factory data/dataset_info.json
+template: qwen
+cutoff_len: 8192                        # stage 2: override to 32768 on long-ctx subset
+max_samples: 600000
+overwrite_cache: true
+preprocessing_num_workers: 32
+dataloader_num_workers: 8
+packing: true
+
+### output
+output_dir: /workspace/out/deephat-v2-qwen3.5-9b-lora
+logging_steps: 10
+save_steps: 1000
+save_total_limit: 3
+plot_loss: true
+overwrite_output_dir: true
+report_to: none
+
+### train
+per_device_train_batch_size: 4
+gradient_accumulation_steps: 8
+learning_rate: 1.0e-4
+num_train_epochs: 2.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.03
+seed: 42
+ddp_timeout: 180000000

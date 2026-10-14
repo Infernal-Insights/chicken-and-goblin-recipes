@@ -1,0 +1,71 @@
+# DeepHat V2 — PREFERENCE STAGE STUB (Axolotl DPO)
+# DeepHat V1 used Axolotl; keep toolchain continuity for the DPO stage.
+# Runs on the SFT LoRA-merged checkpoint.
+#
+# HARD CONSTRAINT: "chosen" = security-capable responses. Pairs whose CHOSEN is a
+# refusal of a security-flavored prompt are dropped by data/refusal_filter.py
+# (kind=helpsteer3|ultrafeedback). CyberNative security-DPO is kept as-is
+# (chosen already = secure/capable code).
+#
+# This is a STUB: fill in the merged-base path and your prepared jsonl paths.
+base_model: /workspace/out/deephat-v2-qwen3.5-9b-sft-merged   # merge SFT LoRA first
+trust_remote_code: true
+model_type: AutoModelForCausalLM
+tokenizer_type: AutoTokenizer
+
+# 9B hybrid: prefer bf16 LoRA (NOT 4-bit). load_in_4bit only for the 8B/14B smoke path.
+load_in_4bit: false
+adapter: lora
+lora_r: 16
+lora_alpha: 16
+lora_dropout: 0.0
+lora_target_modules:
+  - q_proj
+  - k_proj
+  - v_proj
+  - o_proj
+  - gate_proj
+  - up_proj
+  - down_proj
+
+rl: dpo
+rl_beta: 0.1
+chat_template: qwen3
+
+datasets:
+  # Pre-convert each to Axolotl's {prompt, chosen, rejected} jsonl, applying
+  # data/refusal_filter.py (helpsteer3 / ultrafeedback drop refusal-as-chosen).
+  - path: /workspace/data/dpo/helpsteer3_filtered.jsonl    # FILL IN
+    type: chatml.prompt_pairs
+    ds_type: json
+  - path: /workspace/data/dpo/ultrafeedback_filtered.jsonl # FILL IN
+    type: chatml.prompt_pairs
+    ds_type: json
+  - path: /workspace/data/dpo/cybernative_secdpo.jsonl     # kept as-is (chosen=secure)
+    type: chatml.prompt_pairs
+    ds_type: json
+
+dataset_prepared_path: /workspace/data/dpo/prepared
+output_dir: /workspace/out/deephat-v2-dpo
+
+sequence_len: 4096
+sample_packing: false
+pad_to_sequence_len: true
+
+flash_attention: true           # falls back to sdpa if no wheel
+gradient_checkpointing: true
+bf16: true
+
+micro_batch_size: 4
+gradient_accumulation_steps: 8
+num_epochs: 1
+optimizer: adamw_torch_fused
+learning_rate: 5.0e-6
+lr_scheduler: cosine
+warmup_ratio: 0.1
+weight_decay: 0.0
+max_grad_norm: 1.0
+
+logging_steps: 10
+save_steps: 200
+seed: 42

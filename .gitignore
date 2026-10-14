@@ -1,0 +1,59 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# ---- Virtualenvs ----
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# ---- Secrets / tokens (NEVER commit) ----
+.env
+.env.*
+*.token
+.hf_token
+.vast_api_key
+*secret*
+*credentials*
+id_ed25519
+id_ed25519.pub
+*.pem
+
+# ---- Model weights / adapters (live on HF, not GitHub) ----
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.gguf
+*.ckpt
+adapter_model.*
+checkpoint-*/
+
+# ---- Training artifacts / data ----
+outputs/
+out/
+runs/
+wandb/
+logs/
+*.log
+hf_cache/
+data/filtered/
+data/dpo/
+*.jsonl.tmp
+
+# ---- OS / editor ----
+.DS_Store
+*.swp
+.idea/
+.vscode/

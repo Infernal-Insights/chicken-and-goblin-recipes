@@ -1,0 +1,54 @@
+# EXP1 Arm B — Qwen3-14B-Base, 4-bit QLoRA (nf4). Single RTX 4090.
+### model
+model_name_or_path: Qwen/Qwen3-14B-Base
+trust_remote_code: true
+
+### quantization (QLoRA)
+quantization_bit: 4
+quantization_method: bnb
+quantization_type: nf4
+double_quantization: true
+
+### method
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_rank: 16
+lora_alpha: 16
+lora_dropout: 0.0
+lora_target: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+
+### accel
+flash_attn: fa2
+enable_liger_kernel: false
+gradient_checkpointing: true
+
+### dataset — SHARED 20k slice
+dataset: exp1_slice
+template: qwen
+cutoff_len: 2048
+max_samples: 20000
+overwrite_cache: true
+preprocessing_num_workers: 8
+dataloader_num_workers: 2
+packing: true
+
+### output
+output_dir: /workspace/out/exp1_armB
+logging_steps: 5
+save_steps: 60
+save_total_limit: 1
+plot_loss: true
+overwrite_output_dir: true
+report_to: none
+
+### train — short smoke
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 16
+learning_rate: 2.0e-4
+max_steps: 60
+lr_scheduler_type: cosine
+warmup_ratio: 0.03
+bf16: true
+seed: 42
+ddp_timeout: 180000000

@@ -1,0 +1,48 @@
+# EXP1 Arm A — Qwen3.5-9B-Base, bf16 LoRA (NO quantization; DeltaNet hybrid needs bf16).
+# Freeze embed + LM head (default with LoRA; no additional_target). MTP head stripped first.
+### model
+model_name_or_path: /workspace/qwen3.5-9b-base-nomtp
+trust_remote_code: true
+
+### method (bf16 LoRA)
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_rank: 16
+lora_alpha: 16
+lora_dropout: 0.0
+lora_target: q_proj,k_proj,v_proj,o_proj,gate_proj,up_proj,down_proj
+
+### accel
+flash_attn: fa2
+gradient_checkpointing: true
+bf16: true
+
+### dataset — SHARED 20k slice
+dataset: exp1_slice
+template: qwen
+cutoff_len: 2048
+max_samples: 20000
+overwrite_cache: true
+preprocessing_num_workers: 8
+dataloader_num_workers: 2
+packing: true
+
+### output
+output_dir: /workspace/out/exp1_armA
+logging_steps: 5
+save_steps: 60
+save_total_limit: 1
+plot_loss: true
+overwrite_output_dir: true
+report_to: none
+
+### train — short smoke
+per_device_train_batch_size: 4
+gradient_accumulation_steps: 4
+learning_rate: 2.0e-4
+max_steps: 60
+lr_scheduler_type: cosine
+warmup_ratio: 0.03
+seed: 42
+ddp_timeout: 180000000

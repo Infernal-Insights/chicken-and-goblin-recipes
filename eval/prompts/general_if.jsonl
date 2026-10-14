@@ -1,0 +1,8 @@
+{"id": "gen_01", "cat": "instruction_following", "placeholder": true, "prompt": "List exactly five prime numbers greater than 50, comma-separated, no other text."}
+{"id": "gen_02", "cat": "instruction_following", "placeholder": true, "prompt": "Reply with only the word OK in uppercase."}
+{"id": "gen_03", "cat": "instruction_following", "placeholder": true, "prompt": "Write a Python function is_palindrome(s) ignoring case and non-alphanumerics; include two tests."}
+{"id": "gen_04", "cat": "instruction_following", "placeholder": true, "prompt": "Summarize the difference between TCP and UDP in exactly two sentences."}
+{"id": "gen_05", "cat": "instruction_following", "placeholder": true, "prompt": "Output a JSON object with keys 'a' and 'b' set to 1 and 2."}
+{"id": "gen_06", "cat": "instruction_following", "placeholder": true, "prompt": "Convert 42 kilometers to miles; show the formula and round to 2 decimals."}
+{"id": "gen_07", "cat": "instruction_following", "placeholder": true, "prompt": "Give three bullet points on why gradient checkpointing saves VRAM."}
+{"id": "gen_08", "cat": "instruction_following", "placeholder": true, "prompt": "Respond in exactly one sentence that contains the word 'deterministic'."}
