@@ -1,0 +1,35 @@
+{
+  "type": "function",
+  "function": {
+    "name": "metasploit_rpc",
+    "description": "Invoke Metasploit via MSFRPC / module run: use a module, set options, and execute. Lab/authorized targets only.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": ["module.execute", "module.list", "session.list", "job.list", "console.write"],
+          "description": "MSFRPC-style action."
+        },
+        "module_type": {
+          "type": ["string", "null"],
+          "description": "exploit|auxiliary|post|payload|encoder|nop. null when listing."
+        },
+        "module_name": {
+          "type": ["string", "null"],
+          "description": "Full module path e.g. exploit/multi/handler or auxiliary/scanner/ssh/ssh_login. null for list."
+        },
+        "options": {
+          "type": ["object", "null"],
+          "description": "Module datastore options (RHOSTS, LHOST, LPORT, PAYLOAD, etc.). null if none.",
+          "additionalProperties": true
+        },
+        "payload": {
+          "type": ["string", "null"],
+          "description": "Payload module when action runs an exploit. null for auxiliary/list."
+        }
+      },
+      "required": ["action"]
+    }
+  }
+}

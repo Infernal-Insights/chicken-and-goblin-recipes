@@ -1,0 +1,57 @@
+{
+  "type": "function",
+  "function": {
+    "name": "burp",
+    "description": "Drive Burp Suite style repeater/intruder operations against an authorized web app (send modified request, or launch an Intruder attack with payloads).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["repeater", "intruder"],
+          "description": "repeater = single crafted request; intruder = payload positions + attack."
+        },
+        "method": {
+          "type": "string",
+          "enum": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
+          "description": "HTTP method."
+        },
+        "url": {
+          "type": "string",
+          "description": "Full request URL."
+        },
+        "headers": {
+          "type": ["object", "null"],
+          "description": "Additional/override headers. null = defaults only.",
+          "additionalProperties": {"type": "string"}
+        },
+        "body": {
+          "type": ["string", "null"],
+          "description": "Raw body. null for body-less requests."
+        },
+        "payload_positions": {
+          "type": ["array", "null"],
+          "description": "Intruder only: list of {start,end} or §markers. null for repeater.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ref": {"type": "string"},
+              "placeholder": {"type": "string"}
+            }
+          }
+        },
+        "payloads": {
+          "type": ["array", "null"],
+          "description": "Intruder payloads. null for repeater.",
+          "items": {"type": "string"}
+        },
+        "attack_type": {
+          "type": ["string", "null"],
+          "enum": ["sniper", "battering_ram", "pitchfork", "cluster_bomb", null],
+          "description": "Intruder attack type. null for repeater."
+        }
+      },
+      "required": ["mode", "method", "url"]
+    }
+  }
+}

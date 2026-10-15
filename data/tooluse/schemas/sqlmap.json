@@ -1,0 +1,69 @@
+{
+  "type": "function",
+  "function": {
+    "name": "sqlmap",
+    "description": "Run sqlmap against an authorized web target to detect/exploit SQL injection. Always batch-mode for automation.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Target URL including injectable parameter placeholder."
+        },
+        "data": {
+          "type": ["string", "null"],
+          "description": "POST body for --data. null for GET-only."
+        },
+        "p": {
+          "type": ["string", "null"],
+          "description": "Parameter name to test (-p). null = auto."
+        },
+        "technique": {
+          "type": ["string", "null"],
+          "description": "Techniques letter set (B/E/U/S/T/Q). null = default."
+        },
+        "dbms": {
+          "type": ["string", "null"],
+          "description": "Backend DBMS hint. null = fingerprint."
+        },
+        "level": {
+          "type": ["integer", "null"],
+          "description": "Test level 1-5. null = 1."
+        },
+        "risk": {
+          "type": ["integer", "null"],
+          "description": "Risk 1-3. null = 1."
+        },
+        "dbs": {
+          "type": ["boolean", "null"],
+          "description": "Enumerate databases (--dbs). null/false = no."
+        },
+        "tables": {
+          "type": ["boolean", "null"],
+          "description": "Enumerate tables (--tables). Requires -D when true."
+        },
+        "D": {
+          "type": ["string", "null"],
+          "description": "Database name for -D. null if not dumping/enumerating a specific DB."
+        },
+        "T": {
+          "type": ["string", "null"],
+          "description": "Table name for -T. null if not dumping a table."
+        },
+        "dump": {
+          "type": ["boolean", "null"],
+          "description": "Dump table contents (--dump)."
+        },
+        "batch": {
+          "type": "boolean",
+          "description": "Non-interactive (--batch). Prefer true."
+        },
+        "extra_args": {
+          "type": ["string", "null"],
+          "description": "Extra allow-listed args. null = none."
+        }
+      },
+      "required": ["url", "batch"]
+    }
+  }
+}

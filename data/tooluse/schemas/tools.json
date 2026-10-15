@@ -1,0 +1,326 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "nmap",
+      "description": "Run an Nmap network scan against an authorized lab/engagement target. Supports host discovery, port/service/version scan, OS detect, and NSE scripts.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Target host, CIDR, or hostname (authorized scope only)."
+          },
+          "ports": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Port list/range for -p (e.g. '22,80,443' or '1-1024'). null = Nmap default."
+          },
+          "scan_type": {
+            "type": "string",
+            "enum": [
+              "sS",
+              "sT",
+              "sU",
+              "sV",
+              "sn",
+              "A"
+            ],
+            "description": "Primary scan flag without leading dash (sS SYN, sT connect, sU UDP, sV version, sn ping, A aggressive)."
+          },
+          "scripts": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "NSE script or category for --script (e.g. 'vuln', 'http-enum'). null = none."
+          },
+          "timing": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "T0-T5 timing template as integer 0-5. null = default T3."
+          },
+          "extra_args": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Additional safe allow-listed args (e.g. '-Pn -n'). null = none."
+          }
+        },
+        "required": [
+          "target",
+          "scan_type"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "sqlmap",
+      "description": "Run sqlmap against an authorized web target to detect/exploit SQL injection. Always batch-mode for automation.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Target URL including injectable parameter placeholder."
+          },
+          "data": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "POST body for --data. null for GET-only."
+          },
+          "p": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Parameter name to test (-p). null = auto."
+          },
+          "technique": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Techniques letter set (B/E/U/S/T/Q). null = default."
+          },
+          "dbms": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Backend DBMS hint. null = fingerprint."
+          },
+          "level": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Test level 1-5. null = 1."
+          },
+          "risk": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Risk 1-3. null = 1."
+          },
+          "dbs": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Enumerate databases (--dbs). null/false = no."
+          },
+          "tables": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Enumerate tables (--tables). Requires -D when true."
+          },
+          "D": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Database name for -D. null if not dumping/enumerating a specific DB."
+          },
+          "T": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Table name for -T. null if not dumping a table."
+          },
+          "dump": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Dump table contents (--dump)."
+          },
+          "batch": {
+            "type": "boolean",
+            "description": "Non-interactive (--batch). Prefer true."
+          },
+          "extra_args": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Extra allow-listed args. null = none."
+          }
+        },
+        "required": [
+          "url",
+          "batch"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "metasploit_rpc",
+      "description": "Invoke Metasploit via MSFRPC / module run: use a module, set options, and execute. Lab/authorized targets only.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "module.execute",
+              "module.list",
+              "session.list",
+              "job.list",
+              "console.write"
+            ],
+            "description": "MSFRPC-style action."
+          },
+          "module_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "exploit|auxiliary|post|payload|encoder|nop. null when listing."
+          },
+          "module_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Full module path e.g. exploit/multi/handler or auxiliary/scanner/ssh/ssh_login. null for list."
+          },
+          "options": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Module datastore options (RHOSTS, LHOST, LPORT, PAYLOAD, etc.). null if none.",
+            "additionalProperties": true
+          },
+          "payload": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Payload module when action runs an exploit. null for auxiliary/list."
+          }
+        },
+        "required": [
+          "action"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "burp",
+      "description": "Drive Burp Suite style repeater/intruder operations against an authorized web app (send modified request, or launch an Intruder attack with payloads).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "repeater",
+              "intruder"
+            ],
+            "description": "repeater = single crafted request; intruder = payload positions + attack."
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "GET",
+              "POST",
+              "PUT",
+              "DELETE",
+              "PATCH",
+              "OPTIONS",
+              "HEAD"
+            ],
+            "description": "HTTP method."
+          },
+          "url": {
+            "type": "string",
+            "description": "Full request URL."
+          },
+          "headers": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Additional/override headers. null = defaults only.",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "body": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Raw body. null for body-less requests."
+          },
+          "payload_positions": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "description": "Intruder only: list of {start,end} or \u00a7markers. null for repeater.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "ref": {
+                  "type": "string"
+                },
+                "placeholder": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "payloads": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "description": "Intruder payloads. null for repeater.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "attack_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "sniper",
+              "battering_ram",
+              "pitchfork",
+              "cluster_bomb",
+              null
+            ],
+            "description": "Intruder attack type. null for repeater."
+          }
+        },
+        "required": [
+          "mode",
+          "method",
+          "url"
+        ]
+      }
+    }
+  }
+]

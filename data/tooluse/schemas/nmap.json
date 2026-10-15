@@ -1,0 +1,38 @@
+{
+  "type": "function",
+  "function": {
+    "name": "nmap",
+    "description": "Run an Nmap network scan against an authorized lab/engagement target. Supports host discovery, port/service/version scan, OS detect, and NSE scripts.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "description": "Target host, CIDR, or hostname (authorized scope only)."
+        },
+        "ports": {
+          "type": ["string", "null"],
+          "description": "Port list/range for -p (e.g. '22,80,443' or '1-1024'). null = Nmap default."
+        },
+        "scan_type": {
+          "type": "string",
+          "enum": ["sS", "sT", "sU", "sV", "sn", "A"],
+          "description": "Primary scan flag without leading dash (sS SYN, sT connect, sU UDP, sV version, sn ping, A aggressive)."
+        },
+        "scripts": {
+          "type": ["string", "null"],
+          "description": "NSE script or category for --script (e.g. 'vuln', 'http-enum'). null = none."
+        },
+        "timing": {
+          "type": ["integer", "null"],
+          "description": "T0-T5 timing template as integer 0-5. null = default T3."
+        },
+        "extra_args": {
+          "type": ["string", "null"],
+          "description": "Additional safe allow-listed args (e.g. '-Pn -n'). null = none."
+        }
+      },
+      "required": ["target", "scan_type"]
+    }
+  }
+}
